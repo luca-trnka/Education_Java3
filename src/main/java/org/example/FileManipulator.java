@@ -34,7 +34,6 @@ public class FileManipulator {
 
     public void writeGenresToFile(String filePath, List<Game> games) {
         List<String> genres = new ArrayList<>(); // Use a simple list to store genres
-
         for (Game game : games) {
             for (String genre : game.getGenres()) {
                 if (!genres.contains(genre)) { //Check if the genre is already in the list
@@ -58,6 +57,28 @@ public class FileManipulator {
         // Write the string to file
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
             writer.write(finalSb);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void writeSimulatorGamesToFile(String filePath, List<Game> games) {
+        List<Game> simulatorGames = new ArrayList<>();
+        for (Game game : games) {
+            if (game.getGenres().contains("Simulator")) {
+                simulatorGames.add(game);
+            }
+        }
+
+        // Sort the list of simulator games by release year
+        simulatorGames.sort(Comparator.comparingInt(Game::getReleaseYear));
+
+        // Write to file
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
+            writer.write("Title,Year\n"); //Names of columns
+            for (Game game : simulatorGames) {
+                writer.write(game.getTitle() + ", " + game.getReleaseYear() + "\n");
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
