@@ -2,12 +2,8 @@ package org.example;
 
 import org.example.model.Game;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.io.*;
+import java.util.*;
 
 public class FileManipulator {
 
@@ -34,6 +30,37 @@ public class FileManipulator {
             e.printStackTrace();
         }
         return gameList;
+    }
+
+    public void writeGenresToFile(String filePath, List<Game> games) {
+        List<String> genres = new ArrayList<>(); // Use a simple list to store genres
+
+        for (Game game : games) {
+            for (String genre : game.getGenres()) {
+                if (!genres.contains(genre)) { //Check if the genre is already in the list
+                    genres.add(genre); //Add only unique genres
+                }
+            }
+        }
+        Collections.sort(genres);
+
+        StringBuilder sb = new StringBuilder();
+        for (String genre : genres) {
+            sb.append(genre).append(", ");
+        }
+
+        // Remove the last ", "
+        String finalSb = "";
+        if (sb.length() > 0) {
+            finalSb = sb.substring(0,sb.length() - 2);
+        }
+
+        // Write the string to file
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
+            writer.write(finalSb);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private List<String> lineSplitter (String line) {
