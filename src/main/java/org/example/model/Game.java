@@ -5,15 +5,15 @@ import java.util.List;
 public class Game {
     private String title;
     private int releaseYear;
-    private String developer;
-    private String publisher;
+    private List<String> developers;
+    private List<String> publishers;
     private List<String> genres;
 
-    public Game(String title, int releaseYear, String developer, String publisher, List<String> genres) {
+    public Game(String title, int releaseYear, List<String> developers, List<String> publishers, List<String> genres) {
         this.title = title;
         this.releaseYear = releaseYear;
-        this.developer = developer;
-        this.publisher = publisher;
+        this.developers = developers;
+        this.publishers = publishers;
         this.genres = genres;
     }
 
@@ -33,20 +33,20 @@ public class Game {
         this.releaseYear = releaseYear;
     }
 
-    public String getDeveloper() {
-        return developer;
+    public List<String> getDevelopers() {
+        return developers;
     }
 
-    public void setDeveloper(String developer) {
-        this.developer = developer;
+    public void setDevelopers(List<String> developers) {
+        this.developers = developers;
     }
 
-    public String getPublisher() {
-        return publisher;
+    public List<String> getPublishers() {
+        return publishers;
     }
 
-    public void setPublisher(String publisher) {
-        this.publisher = publisher;
+    public void setPublishers(List<String> publishers) {
+        this.publishers = publishers;
     }
 
     public List<String> getGenres() {
