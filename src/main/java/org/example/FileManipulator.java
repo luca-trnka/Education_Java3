@@ -4,6 +4,7 @@ import org.example.model.Game;
 
 import java.io.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class FileManipulator {
 
@@ -78,6 +79,33 @@ public class FileManipulator {
             writer.write("Title,Year\n"); //Names of columns
             for (Game game : simulatorGames) {
                 writer.write(game.getTitle() + ", " + game.getReleaseYear() + "\n");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void writePublishersWithTheirGamesCount (String filePath, List<Game> games) {
+        Map<String, Integer> publishersAndCount = new HashMap<>();
+        int count = 0;
+        for (Game game : games) {
+            for (String publisher : game.getPublishers()) {
+                if (!publishersAndCount.containsKey(publisher)) {
+                    publishersAndCount.put(publisher, count);
+                    count = 1;
+                } count++;
+                publishersAndCount.replace(publisher, count);
+            }
+        }
+
+        List<Map.Entry<String, Integer>> sortedPublishers = publishersAndCount.entrySet().stream()
+                .sorted(Map.Entry.<String, Integer>comparingByValue().reversed()) // Sort by value descending
+                .collect(Collectors.toList());
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
+            writer.write("Publisher, Count\n");
+            for (Map.Entry<String, Integer> entry : sortedPublishers) {
+                writer.write(entry.getKey() + ", " + entry.getValue() + "\n");
             }
         } catch (IOException e) {
             e.printStackTrace();
