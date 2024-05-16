@@ -18,8 +18,8 @@ public class DataTranformer {
             if (fields.size() >= 5) {
                 String title = fields.get(0);
                 int releaseYear = parseReleaseYear(fields.get(1).trim());
-                List<String> developers = Arrays.asList(fields.get(2).split("\\s*;\\s*"));
-                List<String> publishers = Arrays.asList(fields.get(3).split("\\s*;\\s*"));
+                List<String> developers = Arrays.asList(fields.get(2).split("\\s*,\\s*"));
+                List<String> publishers = Arrays.asList(fields.get(3).split("\\s*,\\s*"));
                 List<String> genres = Arrays.asList(fields.get(4).split("\\s*,\\s*"));
 
                 Game game = new Game(title, releaseYear, developers, publishers, genres);
@@ -68,14 +68,15 @@ public class DataTranformer {
     }
 
     public String generatePublishersGamesCount(List<Game> games) {
-        Map<String, Integer> publishersCount = new HashMap<>();
+
+      Map<String, Integer> publishersCount = new HashMap<>();
 
         for (Game game : games) {
             for (String publisher : game.getPublishers()) {
                 if (!publishersCount.containsKey(publisher)) {
                     publishersCount.put(publisher, 1);
                 }
-                publishersCount.replace(publisher, publishersCount.get(publisher).intValue() + 1);
+                publishersCount.replace(publisher, publishersCount.get(publisher) + 1);
             }
         }
 
@@ -119,4 +120,5 @@ public class DataTranformer {
             return -1; //Return default value for unknown year
         }
     }
+
 }
