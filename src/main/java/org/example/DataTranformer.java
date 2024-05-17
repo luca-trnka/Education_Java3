@@ -70,7 +70,7 @@ public class DataTranformer {
 
         for (Game game : games) {
             for (String publisher : game.getPublishers()) {
-                if (publisher.length() > 0) {
+                if (publisher.length() > 0 && !(publisher.equals("Inc.") || publisher.equals("Inc") || publisher.equals("Inc. et al."))) {
                     if (!publishersCount.containsKey(publisher)) {
                         publishersCount.put(publisher, 1);
                     }
