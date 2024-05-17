@@ -2,9 +2,6 @@ package org.example;
 
 import org.example.model.Game;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -13,8 +10,8 @@ public class DataTranformer {
     public List<Game> gameExtraction(List<String> lines) {
         List<Game> gameList = new ArrayList<>();
 
-        for (String line : lines) {
-            List<String> fields = lineSplitter(line);
+        for (int i = 1; i < lines.size(); i++) { //starting at second line - i dont want to extract headers
+            List<String> fields = lineSplitter(lines.get(i));
             if (fields.size() >= 5) {
                 String title = fields.get(0);
                 int releaseYear = parseReleaseYear(fields.get(1).trim());
@@ -73,13 +70,14 @@ public class DataTranformer {
 
         for (Game game : games) {
             for (String publisher : game.getPublishers()) {
-                if (!publishersCount.containsKey(publisher)) {
-                    publishersCount.put(publisher, 1);
+                if (publisher.length() > 0) {
+                    if (!publishersCount.containsKey(publisher)) {
+                        publishersCount.put(publisher, 1);
+                    }
+                    publishersCount.replace(publisher, publishersCount.get(publisher) + 1);
                 }
-                publishersCount.replace(publisher, publishersCount.get(publisher) + 1);
             }
         }
-
         List<Map.Entry<String, Integer>> sortedPublishers = publishersCount.entrySet().stream()
                 .sorted(Map.Entry.<String, Integer>comparingByValue().reversed()) //Sort by value descending
                 .collect(Collectors.toList());
