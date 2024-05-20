@@ -87,7 +87,14 @@ public class DataTranformer {
                 }
             }
             List<Map.Entry<String, Integer>> sortedPublishers = publishersCount.entrySet().stream()
-                    .sorted(Map.Entry.<String, Integer>comparingByValue().reversed()) //Sort by value descending
+                    .sorted((entry1, entry2) -> {
+                        int valueComparison = entry2.getValue().compareTo(entry1.getValue());
+                        if (valueComparison != 0) {
+                            return valueComparison;
+                        } else {
+                            return entry1.getKey().compareTo(entry2.getKey());
+                        }
+                    })
                     .collect(Collectors.toList());
 
             String title = "Publisher, Count\n"; //Names of columns
