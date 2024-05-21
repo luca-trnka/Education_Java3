@@ -4,6 +4,14 @@ import java.io.*;
 import java.util.*;
 
 public class FileManipulator {
+    private String filepath;
+
+    public FileManipulator(String filepath) {
+        this.filepath = filepath;
+    }
+
+    public FileManipulator() {
+    }
 
     public List<String> readGamesFromFile(String filePath) {
         List<String> lines = new ArrayList<>();
@@ -21,6 +29,17 @@ public class FileManipulator {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        return lines;
+    }
+
+    public List<String> readLinesFromFile() throws IOException {
+        List<String> lines = new ArrayList<>();
+        try (BufferedReader reader = new BufferedReader(new FileReader(this.filepath))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                lines.add(line);
+            }
+        }
         return lines;
     }
 

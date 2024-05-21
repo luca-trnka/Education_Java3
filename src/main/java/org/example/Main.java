@@ -3,11 +3,12 @@ package org.example;
 import org.example.model.Game;
 
 import java.util.List;
+import java.util.Map;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
 
-        FileManipulator manipulator = new FileManipulator();
+        /*FileManipulator manipulator = new FileManipulator();
         DataTranformer transformer = new DataTranformer();
 
         //1. Reading Games from File: "games.csv"
@@ -24,6 +25,13 @@ public class Main {
 
         //4. Generating all publishers with a count of their games, sorted from the biggest count of games
         String publishersGameCounts = transformer.generatePublishersGamesCount(extractedGames);
-        manipulator.writeTextToFile("src/main/resources/game_publishers.csv", publishersGameCounts);
-        }
+        manipulator.writeTextToFile("src/main/resources/game_publishers.csv", publishersGameCounts);*/
+
+        CSVmanipulator csv = new CSVmanipulator("src/main/resources/games.csv", ",");
+        List<Map<String, String>> data = csv.getData();
+
+        csv.giveData("src/main/resources/games2.csv", data, ",");
+
+
+    }
 }
