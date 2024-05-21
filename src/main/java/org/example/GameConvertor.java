@@ -47,10 +47,10 @@ public class GameConvertor {
 
                 data.add(gameData);
             }
+            return data;
         }
-        return null;
+            return null;
     }
-
   /*  public List<String> extractUnitsFromStrings(String token) {
         List<String> units = new ArrayList<>();
         boolean inQuotes = false;
