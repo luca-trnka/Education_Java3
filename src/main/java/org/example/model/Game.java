@@ -5,6 +5,7 @@ import java.util.List;
 public class Game {
     private String title;
     private int releaseYear;
+    private boolean isTBA;
     private List<String> developers;
     private List<String> publishers;
     private List<String> genres;
@@ -15,6 +16,19 @@ public class Game {
         this.developers = developers;
         this.publishers = publishers;
         this.genres = genres;
+    }
+
+    public Game(String title, int releaseYear, boolean isTBA, List<String> developers, List<String> publishers, List<String> genres) {
+        this(title, releaseYear, developers, publishers, genres);
+        this.isTBA = isTBA;
+    }
+
+    public boolean isTBA() {
+        return isTBA;
+    }
+
+    public void setTBA(boolean TBA) {
+        isTBA = TBA;
     }
 
     public String getTitle() {
