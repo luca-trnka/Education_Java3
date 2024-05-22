@@ -18,7 +18,7 @@ class FileManipulatorTest {
 
     @Test
     void testReadGamesFromFile_WhenFileExistsAndNotEmpty() {
-        List<String> lines = manipulator.readGamesFromFile("src/test/resources/games_test.csv");
+        List<String> lines = manipulator.readGamesFromFile("src/test/resources/test.csv");
         assertNotNull(lines);
         assertFalse(lines.isEmpty());
     }

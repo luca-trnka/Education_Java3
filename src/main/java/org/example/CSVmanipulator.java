@@ -16,6 +16,10 @@ public class CSVmanipulator {
         return m;
     }
 
+    public void setM(FileManipulator m) {
+        this.m = m;
+    }
+
     public CSVmanipulator(String filepath, String separator) {
         this.m = new FileManipulator(filepath);
         this.separator = separator;

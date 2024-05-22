@@ -14,6 +14,13 @@ public class GameTask {
         this.gc = new GameConvertor();
     }
 
+    void setDependencies(FileManipulator fileManipulator, CSVmanipulator csvManipulator, GameConvertor gameConvertor) {
+        this.csv = csvManipulator;
+        this.csv.setM(fileManipulator);
+        this.gc = gameConvertor;
+    }
+
+
     public void generateGameGenres(String outputFilePath) throws Exception {
         List<Game> games = gc.gameExtractionFromData(csv.getData());
         List<String> genres = games.stream()
@@ -86,6 +93,21 @@ public class GameTask {
         csv.getM().writeTextToFile(outputFilePath, result);
     }
 
+    public CSVmanipulator getCsv() {
+        return csv;
+    }
+
+    public void setCsv(CSVmanipulator csv) {
+        this.csv = csv;
+    }
+
+    public GameConvertor getGc() {
+        return gc;
+    }
+
+    public void setGc(GameConvertor gc) {
+        this.gc = gc;
+    }
 }
 
 

@@ -13,7 +13,7 @@ public class CSVmanipulatorTest {
 
     @BeforeEach
     public void setUp() throws IOException {
-        String testFilePath = "test.csv";
+        String testFilePath = "src/test/resources/test.csv";
         createTestFile(testFilePath);
         csvmanipulator = new CSVmanipulator(testFilePath, separator);
         csvmanipulator.getData(); // Initialize headers by calling getData
@@ -21,8 +21,8 @@ public class CSVmanipulatorTest {
 
     private void createTestFile(String filePath) throws IOException {
         String content = "titles,released,developers,publishers,genres\n" +
-                "Game A,2022,Dev A,Pub A,Action\n" +
-                "Game B,TBA,Dev B,Pub B,Adventure\n";
+                "Game A,2022,Dev A,Pub A,\"Action,Adventure\"\n" +
+                "Game B,TBA,Dev B,Pub B,\"Adventure,Puzzle\"\n";
         FileManipulator fileManipulator = new FileManipulator(filePath);
         fileManipulator.writeTextToFile(filePath, content);
     }
@@ -38,7 +38,7 @@ public class CSVmanipulatorTest {
         assertEquals("2022", firstGame.get("released"));
         assertEquals("Dev A", firstGame.get("developers"));
         assertEquals("Pub A", firstGame.get("publishers"));
-        assertEquals("Action", firstGame.get("genres"));
+        assertEquals("Action,Adventure", firstGame.get("genres"));
     }
 
     @Test
@@ -53,8 +53,8 @@ public class CSVmanipulatorTest {
         FileManipulator fileManipulator = new FileManipulator(outputFilePath);
         List<String> lines = fileManipulator.readLinesFromFile();
         assertEquals("titles,released,developers,publishers,genres", lines.get(0));
-        assertEquals("Game A,2022,Dev A,Pub A,Action", lines.get(1));
-        assertEquals("Game B,TBA,Dev B,Pub B,Adventure", lines.get(2));
+        assertEquals("Game A,2022,Dev A,Pub A,\"Action,Adventure\"", lines.get(1));
+        assertEquals("Game B,TBA,Dev B,Pub B,\"Adventure,Puzzle\"", lines.get(2));
     }
 
     @Test
