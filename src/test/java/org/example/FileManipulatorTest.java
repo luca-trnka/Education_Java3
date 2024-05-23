@@ -3,6 +3,8 @@ package org.example;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -17,25 +19,30 @@ class FileManipulatorTest {
     }
 
     @Test
-    void testReadGamesFromFile_WhenFileExistsAndNotEmpty() {
-        List<String> lines = manipulator.readGamesFromFile("src/test/resources/test.csv");
+    void testReadLinesFromFile_WhenFileExistsAndNotEmpty() throws IOException {
+        manipulator = new FileManipulator("src/test/resources/test.csv");
+        List<String> lines = manipulator.readLinesFromFile();
         assertNotNull(lines);
         assertFalse(lines.isEmpty());
+        assertEquals(3,lines.size());
     }
 
     @Test
-    void testReadGamesFromFile_WhenFileDoesNotExist() {
-        List<String> lines = manipulator.readGamesFromFile("non_existing_file.csv");
-        assertNotNull(lines);
-        assertTrue(lines.isEmpty());
+    void testReadLinesFromFile_WhenFileDoesNotExist() {
+        manipulator = new FileManipulator("non_existing_file.txt");
+        assertThrows(IOException.class, () -> {
+            manipulator.readLinesFromFile();
+        });
     }
 
     @Test
-    void testReadGamesFromFile_WhenFilePathIsNull() {
-        List<String> lines = manipulator.readGamesFromFile(null);
-        assertNotNull(lines);
-        assertTrue(lines.isEmpty());
+    void testReadLinesFromFile_WhenFilePathIsNull() {
+        manipulator = new FileManipulator(null);
+        assertThrows(FileNotFoundException.class, () -> {
+            manipulator.readLinesFromFile();
+        });
     }
+
 
     @Test
     void testWriteTextToFile_WhenFilePathIsNull() {
