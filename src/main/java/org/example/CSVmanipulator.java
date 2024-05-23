@@ -34,7 +34,7 @@ public class CSVmanipulator {
         this.headers = lineSplitter(lines.get(0));
         List<Map<String, String>> structure = new ArrayList<>();
         for (int i = 1; i < lines.size(); i++) {
-            Map<String, String> map = new HashMap<>();
+            Map<String, String> map = new LinkedHashMap<>();
             List<String> values = lineSplitter(lines.get(i));
             for (int j = 0; j < headers.size(); j++) {
                 map.put(headers.get(j), values.get(j));
@@ -50,8 +50,7 @@ public class CSVmanipulator {
             return;
         }
         StringBuilder sb = new StringBuilder();
-        Set<String> headerSet = data.get(0).keySet();
-       // List<String> headres = this.headers.stream().filter(headerSet::contains).toList();
+        LinkedHashSet<String> headerSet = new LinkedHashSet<>(data.get(0).keySet());
         sb.append(String.join(separator, headerSet)).append(System.lineSeparator());
 
         for (Map<String, String> map : data.subList(0, data.size())) {

@@ -12,19 +12,9 @@ public class CSVmanipulatorTest {
     private final String separator = ",";
 
     @BeforeEach
-    public void setUp() throws IOException {
+    public void setUp() {
         String testFilePath = "src/test/resources/test.csv";
-        createTestFile(testFilePath);
         csvmanipulator = new CSVmanipulator(testFilePath, separator);
-        csvmanipulator.getData(); // Initialize headers by calling getData
-    }
-
-    private void createTestFile(String filePath) throws IOException {
-        String content = "titles,released,developers,publishers,genres\n" +
-                "Game A,2022,Dev A,Pub A,\"Action,Adventure\"\n" +
-                "Game B,TBA,Dev B,Pub B,\"Adventure,Puzzle\"\n";
-        FileManipulator fileManipulator = new FileManipulator(filePath);
-        fileManipulator.writeTextToFile(filePath, content);
     }
 
     @Test
@@ -47,7 +37,7 @@ public class CSVmanipulatorTest {
         assertNotNull(data);
         assertFalse(data.isEmpty());
 
-        String outputFilePath = "output.csv";
+        String outputFilePath = "src/test/resources/output.csv";
         csvmanipulator.giveData(outputFilePath, data, separator);
 
         FileManipulator fileManipulator = new FileManipulator(outputFilePath);
