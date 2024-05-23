@@ -2,6 +2,7 @@ package org.example;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class CSVmanipulator {
     FileManipulator m;
@@ -48,15 +49,14 @@ public class CSVmanipulator {
         if(data.isEmpty()) {
             return;
         }
-
         StringBuilder sb = new StringBuilder();
         Set<String> headerSet = data.get(0).keySet();
-        List<String> headres = this.headers.stream().filter(headerSet::contains).toList();
-        sb.append(String.join(separator, headres)).append(System.lineSeparator());
+       // List<String> headres = this.headers.stream().filter(headerSet::contains).toList();
+        sb.append(String.join(separator, headerSet)).append(System.lineSeparator());
 
-        for (Map<String, String> map : data) {
+        for (Map<String, String> map : data.subList(1, data.size())) {
             List<String> values = new ArrayList<>();
-            for (String header : headres) {
+            for (String header : headerSet) {
                 String v = map.get(header);
                 if(v.contains(separator)) {
                     v = "\"" + v + "\"";
@@ -66,7 +66,6 @@ public class CSVmanipulator {
             sb.append(String.join(separator, values)).append(System.lineSeparator());
         }
         m.writeTextToFile(filePath, sb.toString());
-
     }
 
 

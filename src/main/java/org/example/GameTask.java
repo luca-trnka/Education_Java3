@@ -6,20 +6,13 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class GameTask {
-    CSVmanipulator csv;
-    GameConvertor gc;
+    final CSVmanipulator csv;
+    final GameConvertor gc;
 
     public GameTask(String filePath, String separator) {
         this.csv = new CSVmanipulator(filePath, separator);
         this.gc = new GameConvertor();
     }
-
-    void setDependencies(FileManipulator fileManipulator, CSVmanipulator csvManipulator, GameConvertor gameConvertor) {
-        this.csv = csvManipulator;
-        this.csv.setM(fileManipulator);
-        this.gc = gameConvertor;
-    }
-
 
     public void generateGameGenres(String outputFilePath) throws Exception {
         List<Game> games = gc.gameExtractionFromData(csv.getData());
@@ -36,26 +29,18 @@ public class GameTask {
 
     public void generateGamesByGenre(String outputFilePath, String wantedGenre) throws Exception {
         List<Game> games = gc.gameExtractionFromData(csv.getData());
-
-        Map<String, String> extractedGames = games.stream()
+        List<Map<String, String>> data = games.stream()
                 .filter(game -> game.getGenres().contains(wantedGenre))
                 .sorted(Comparator.comparing(Game::getReleaseYear))
-                .collect(Collectors.toMap(
-                        Game::getTitle,
-                        g -> g.isTBA() ? "TBA" : Integer.toString(g.getReleaseYear()),
-                        (e1, e2) -> e1,
-                        LinkedHashMap::new
-                ));
+                .map(game -> {
+                    Map<String, String> map = new LinkedHashMap<>();
+                    map.put("Title", game.getTitle());
+                    map.put("Year", game.isTBA() ? "TBA" : Integer.toString(game.getReleaseYear()));
+                    return map;
+                })
+                .collect(Collectors.toList());
 
-        Map<String, String> finalMap = new LinkedHashMap<>();
-        finalMap.put("Title", "Year");
-        finalMap.putAll(extractedGames);
-
-        String result = finalMap.entrySet().stream()
-                .map(entry -> entry.getKey() + ", " + entry.getValue())
-                .collect(Collectors.joining(System.lineSeparator()));
-
-        csv.getM().writeTextToFile(outputFilePath, result);
+        csv.giveData(outputFilePath, data, ",");
     }
 
     public void generatePublishersGamesCount(String outputFilePath) throws Exception {
@@ -73,6 +58,11 @@ public class GameTask {
                 }
             }
         }
+        Map<String, String> header = new LinkedHashMap<>();
+        header.put("Publisher", "Publisher");
+        header.put("Count", "Count");
+        List<Map<String, String>> data = new ArrayList<>();
+        data.add(header);
 
         List<Map.Entry<String, Integer>> sortedPublishers = publishersCount.entrySet().stream()
                 .sorted((entry1, entry2) -> {
@@ -85,28 +75,16 @@ public class GameTask {
                 })
                 .collect(Collectors.toList());
 
-        String title = "Publisher, Count" + System.lineSeparator(); // Names of columns
-        String result = title + sortedPublishers.stream()
-                .map(entry -> entry.getKey() + ", " + entry.getValue())
-                .collect(Collectors.joining(System.lineSeparator()));
+        List<Map<String, String>> collectedData = sortedPublishers.stream()
+                .map(entry -> {
+                    Map<String, String> m = new LinkedHashMap<>();
+                    m.put("Publisher", entry.getKey());
+                    m.put("Count", entry.getValue().toString());
+                    return m;
+                }).collect(Collectors.toList());
 
-        csv.getM().writeTextToFile(outputFilePath, result);
-    }
-
-    public CSVmanipulator getCsv() {
-        return csv;
-    }
-
-    public void setCsv(CSVmanipulator csv) {
-        this.csv = csv;
-    }
-
-    public GameConvertor getGc() {
-        return gc;
-    }
-
-    public void setGc(GameConvertor gc) {
-        this.gc = gc;
+        data.addAll(collectedData);
+        csv.giveData(outputFilePath, data, ",");
     }
 }
 
