@@ -54,7 +54,7 @@ public class CSVmanipulator {
        // List<String> headres = this.headers.stream().filter(headerSet::contains).toList();
         sb.append(String.join(separator, headerSet)).append(System.lineSeparator());
 
-        for (Map<String, String> map : data.subList(1, data.size())) {
+        for (Map<String, String> map : data.subList(0, data.size())) {
             List<String> values = new ArrayList<>();
             for (String header : headerSet) {
                 String v = map.get(header);

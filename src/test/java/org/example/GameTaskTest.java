@@ -1,126 +1,66 @@
 package org.example;
 
-import org.example.model.Game;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import java.io.File;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
+import static org.junit.jupiter.api.Assertions.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.*;
-
-@ExtendWith(MockitoExtension.class)
 class GameTaskTest {
-
-    @Mock
-    private CSVmanipulator csvManipulator;
-
-    @Mock
-    private FileManipulator fileManipulator;
-
-    @Mock
-    private GameConvertor gameConvertor;
-
-    @InjectMocks
     private GameTask gameTask;
+    private final String testCsvFilePath = "src/test/resources/test.csv";
 
     @BeforeEach
-    void setUp() throws Exception {
-        //Set up mocks
-        lenient().when(fileManipulator.readLinesFromFile()).thenReturn(Arrays.asList(
-                "titles,released,developers,publishers,genres",
-                "Game1,2020,Dev1,Pub1,\"Action, Adventure\"",
-                "Game2,2019,Dev2,Pub2,\"Adventure, Puzzle\"",
-                "Game3,2019,Dev3,Pub2,Arcade"
-        ));
-        List<Map<String, String>> csvData = List.of(
-                Map.of("titles", "Game1", "released", "2020", "developers", "Dev1", "publishers", "Pub1", "genres", "Action, Adventure"),
-                Map.of("titles", "Game2", "released", "2019", "developers", "Dev2", "publishers", "Pub2", "genres", "Adventure, Puzzle"),
-                Map.of("titles", "Game3", "released", "2019", "developers", "Dev3", "publishers", "Pub2", "genres", "Arcade")
-        );
-        when(csvManipulator.getData()).thenReturn(csvData);
-
-        List<Game> games = List.of(
-                new Game("Game1", 2020, Arrays.asList("Dev1"), Arrays.asList("Pub1"), Arrays.asList("Action", "Adventure")),
-                new Game("Game2", 2019, Arrays.asList("Dev2"), Arrays.asList("Pub2"), Arrays.asList("Adventure", "Puzzle")),
-                new Game("Game3", 2019, Arrays.asList("Dev3"), Arrays.asList("Pub2"), Arrays.asList("Arcade"))
-        );
-        when(gameConvertor.gameExtractionFromData(csvData)).thenReturn(games);
-
-        //Mock CSVmanipulator.getM() to return the fileManipulator mock
-        when(csvManipulator.getM()).thenReturn(fileManipulator);
-
-        //Set dependencies for gameTask
-        gameTask.setDependencies(fileManipulator, csvManipulator, gameConvertor);
-
+    void setUp() {
+        gameTask = new GameTask(testCsvFilePath, ",");
     }
 
     @Test
-    void testGenerateGameGenres() throws Exception {
-        String outputFilePath = "scr/test/resources/test-genres.csv";
-
+    void generateGameGenres_ShouldCreateFile() throws Exception {
+        String outputFilePath = "src/test/resources/genres.txt";
         gameTask.generateGameGenres(outputFilePath);
 
-        ArgumentCaptor<String> filePathCaptor = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<String> contentCaptor = ArgumentCaptor.forClass(String.class);
+        String expectedGenres = "Action,Adventure,Puzzle";
+        assertEquals(new File(outputFilePath).exists(),true);
 
-        verify(fileManipulator).writeTextToFile(filePathCaptor.capture(), contentCaptor.capture());
-
-        assertEquals(outputFilePath, filePathCaptor.getValue());
-
-        String expectedContent = "Action,Adventure,Arcade,Puzzle";
-        assertEquals(expectedContent, contentCaptor.getValue());
-
-        System.out.println("File content: " + contentCaptor.getValue());
+        String actualGenres = readLinesFromFile(outputFilePath).get(0);
+        assertEquals(expectedGenres, actualGenres);
     }
 
     @Test
-    void testGenerateGamesByGenre() throws Exception {
-        String outputFilePath = "src/test/resources/test-adventure-games.csv";
-        String wantedGenre = "Adventure";
+    void generateGamesByGenre_ShouldCreateFile() throws Exception {
+        String outputFilePath = "src/test/resources/adventure_games.csv";
+        gameTask.generateGamesByGenre(outputFilePath, "Adventure");
 
-        gameTask.generateGamesByGenre(outputFilePath, wantedGenre);
+        assertEquals(new File(outputFilePath).exists(),true);
 
-        ArgumentCaptor<String> filePathCaptor = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<String> contentCaptor = ArgumentCaptor.forClass(String.class);
+        List<String> expectedData = Arrays.asList("Title,Year", "Game B,TBA", "Game A,2022");
+        List<String> actualData = readLinesFromFile(outputFilePath);
 
-        verify(fileManipulator).writeTextToFile(filePathCaptor.capture(), contentCaptor.capture());
-
-        assertEquals(outputFilePath, filePathCaptor.getValue());
-
-        String expectedContent = "Title, Year" + System.lineSeparator() +
-                "Game2, 2019" + System.lineSeparator() +
-                "Game1, 2020";
-        assertEquals(expectedContent, contentCaptor.getValue());
-
-        System.out.println("File content: " + contentCaptor.getValue());
+        assertEquals(expectedData, actualData);
     }
 
     @Test
-    void testGeneratePublishersGamesCount() throws Exception {
-        String outputFilePath = "src/test/resources/test-publishers-count.csv";
-
+    void generatePublishersGamesCount_ShouldCreateFile() throws Exception {
+        String outputFilePath = "src/test/resources/publishers_count.txt";
         gameTask.generatePublishersGamesCount(outputFilePath);
 
-        ArgumentCaptor<String> filePathCaptor = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<String> contentCaptor = ArgumentCaptor.forClass(String.class);
+        assertEquals(new File(outputFilePath).exists(),true);
 
-        verify(fileManipulator).writeTextToFile(filePathCaptor.capture(), contentCaptor.capture());
+        List<String> expectedData = Arrays.asList("Publisher,Count", "Pub A,1", "Pub B,1");
+        List<String> actualData = readLinesFromFile(outputFilePath);
 
-        assertEquals(outputFilePath, filePathCaptor.getValue());
+        assertEquals(expectedData, actualData);
+    }
 
-        String expectedContent = "Publisher, Count" + System.lineSeparator() +
-                "Pub2, 2" + System.lineSeparator() +
-                "Pub1, 1";
-
-        assertEquals(expectedContent, contentCaptor.getValue());
-
-        System.out.println("File content: " + contentCaptor.getValue());
+    private List<String> readLinesFromFile(String filePath) {
+        try {
+            FileManipulator fileManipulator = new FileManipulator(filePath);
+            return fileManipulator.readLinesFromFile();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

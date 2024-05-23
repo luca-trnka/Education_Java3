@@ -58,12 +58,6 @@ public class GameTask {
                 }
             }
         }
-        Map<String, String> header = new LinkedHashMap<>();
-        header.put("Publisher", "Publisher");
-        header.put("Count", "Count");
-        List<Map<String, String>> data = new ArrayList<>();
-        data.add(header);
-
         List<Map.Entry<String, Integer>> sortedPublishers = publishersCount.entrySet().stream()
                 .sorted((entry1, entry2) -> {
                     int valueComparison = entry2.getValue().compareTo(entry1.getValue());
@@ -83,8 +77,7 @@ public class GameTask {
                     return m;
                 }).collect(Collectors.toList());
 
-        data.addAll(collectedData);
-        csv.giveData(outputFilePath, data, ",");
+        csv.giveData(outputFilePath, collectedData, ",");
     }
 }
 

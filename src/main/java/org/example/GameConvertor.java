@@ -9,14 +9,14 @@ public class GameConvertor {
     public List<Game> gameExtractionFromData (List<Map<String, String>> data) {
             List<Game> gameList = new ArrayList<>();
             if (data != null && !data.isEmpty()) {
-                for (int i = 1; i < data.size(); i++) { //starting at second line - i dont want to extract headers
+                for (int i = 0; i < data.size(); i++) { //starting at second line - i dont want to extract headers
 
                     String title = data.get(i).get("titles");
                     boolean isTBA = isYearTBA(data.get(i).get("released"));
                     int releaseYear = parseReleaseYear(data.get(i).get("released"));
-                    List<String> developers = Arrays.asList(data.get(i).get("developers").split(", "));
-                    List<String> publishers = Arrays.asList(data.get(i).get("publishers").split(", "));
-                    List<String> genres = Arrays.asList(data.get(i).get("genres").split(", "));
+                    List<String> developers = Arrays.asList(data.get(i).get("developers").split(","));
+                    List<String> publishers = Arrays.asList(data.get(i).get("publishers").split(","));
+                    List<String> genres = Arrays.asList(data.get(i).get("genres").split(","));
 
                     Game game = new Game(title, releaseYear, isTBA, developers, publishers, genres);
                     gameList.add(game);
